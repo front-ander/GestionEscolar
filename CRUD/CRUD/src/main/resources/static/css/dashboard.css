@@ -1,0 +1,141 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    background: #343a40; /* Dark background color */
+    color: #fff;
+    transition: all 0.3s;
+    position: fixed; /* Fixed Sidebar */
+    height: 100%;
+    overflow-y: auto; /* Scrollable if content exceeds height */
+    z-index: 1000;
+}
+
+.sidebar.toggled {
+    margin-left: -260px; /* Hide sidebar */
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: #007bff; /* Primary color for header */
+    text-align: center;
+}
+
+.sidebar-header h3 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+.sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+.sidebar ul li a {
+    padding: 15px 20px;
+    font-size: 1.1em;
+    display: block;
+    color: #adb5bd; /* Lighter text color for links */
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.sidebar ul li a:hover {
+    color: #ffffff;
+    background: #007bff; /* Primary color on hover */
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+}
+
+.sidebar ul li.active > a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #0056b3; /* Darker primary for active/expanded */
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #495057; /* Slightly lighter dark for submenus */
+}
+
+/* Content Styles */
+.content {
+    width: 100%;
+    padding-left: 260px; /* Space for the sidebar */
+    min-height: 100vh;
+    transition: all 0.3s;
+    background-color: #f8f9fa; /* Light background for content */
+}
+
+.content.sidebar-toggled {
+    padding-left: 0; /* Full width when sidebar is toggled */
+}
+
+
+.content .navbar {
+    padding: 15px;
+    background-color: #ffffff; /* White navbar */
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+}
+
+#sidebarCollapse {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+#sidebarCollapse:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: -260px; /* Sidebar hidden by default on smaller screens */
+    }
+    .sidebar.toggled {
+        margin-left: 0; /* Sidebar shown when toggled */
+    }
+    .content {
+        padding-left: 0; /* Full width content */
+    }
+    .content.sidebar-toggled {
+        /* Optional: Add a slight margin if sidebar overlays content */
+        /* margin-left: 260px; */
+    }
+    #sidebarCollapse span {
+        display: none; /* Hide text, show only icon */
+    }
+}

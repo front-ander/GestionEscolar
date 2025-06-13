@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo - Sistema Escolar</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap me-2"></i>I.E.P Señor de los milagros</h3>
+                <p th:if="${usuario}" th:text="'Admin: ' + ${usuario.username}">Administrador</p>
+            </div>
+            <ul class="list-unstyled sidebar-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/personas}" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Apoderados</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/estudiantes}" class="nav-link">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Estudiantes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/profesores}" class="nav-link">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Profesores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-book-open"></i>
+                        <span>Cursos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-solid fa-notes-medical"></i>
+                        <span>Notas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-solid fa-file"></i>
+                        <span>Pagos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-solid fa-calendar"></i>
+                        <span>Asistencias</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/logout}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <span class="navbar-brand">Panel de Administración</span>
+                    <div class="user-info">
+                        <div class="user-details text-end">
+                            <h6>Administrador</h6>
+                            <small>Control total del sistema</small>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1 class="welcome-title">Bienvenido de vuelta</h1>
+                    <p class="welcome-subtitle">Resumen del sistema de gestión escolar</p>
+                </div>
+
+                <!-- Stats Cards Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card border-primary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stats-number text-primary" data-stat="personas" th:text="${totalPersonas}">0</div>
+                                    <div class="stats-label">Total Apoderados</div>
+                                </div>
+                                <div class="stats-icon text-primary">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card border-success">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stats-number text-success" data-stat="estudiantes" th:text="${totalEstudiantes}">0</div>
+                                    <div class="stats-label">Estudiantes Activos</div>
+                                </div>
+                                <div class="stats-icon text-success">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card border-warning">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stats-number text-warning" data-stat="profesores" th:text="${totalProfesores}">0</div>
+                                    <div class="stats-label">Profesores Activos</div>
+                                </div>
+                                <div class="stats-icon text-warning">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card border-info">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stats-number text-info" data-stat="cursos" th:text="${totalCursos}">0</div>
+                                    <div class="stats-label">Cursos Disponibles</div>
+                                </div>
+                                <div class="stats-icon text-info">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Cards Row -->
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="modern-card">
+                            <div class="card-gradient-header bg-primary-gradient">
+                                <i class="fas fa-users card-icon"></i>
+                                <h5>Gestión de Apoderados</h5>
+                                <small>Control total del sistema</small>
+                            </div>
+                            <div class="card-body-modern">
+                                <h4 class="card-title-modern">Control Total</h4>
+                                <p class="card-text-modern">Administra todos los registros de personas en el sistema educativo.</p>
+                                <a th:href="@{/personas}" class="btn btn-primary btn-modern">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>Gestionar</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="modern-card">
+                            <div class="card-gradient-header bg-success-gradient">
+                                <i class="fas fa-user-graduate card-icon"></i>
+                                <h5>Gestión de Estudiantes</h5>
+                                <small>Administración estudiantil</small>
+                            </div>
+                            <div class="card-body-modern">
+                                <h4 class="card-title-modern">Estudiantes</h4>
+                                <p class="card-text-modern">Control completo de información y registros académicos estudiantiles.</p>
+                                <a th:href="@{/estudiantes}" class="btn btn-success btn-modern">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>Gestionar</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="modern-card">
+                            <div class="card-gradient-header bg-warning-gradient">
+                                <i class="fas fa-chalkboard-teacher card-icon"></i>
+                                <h5>Gestión de Profesores</h5>
+                                <small>Personal docente</small>
+                            </div>
+                            <div class="card-body-modern">
+                                <h4 class="card-title-modern">Profesores</h4>
+                                <p class="card-text-modern">Administra información del personal docente y sus especialidades.</p>
+                                <a th:href="@{/profesores}" class="btn btn-warning btn-modern">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>Gestionar</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h5><i class="fas fa-bolt text-warning"></i>Acciones Rápidas</h5>
+                    <div class="d-flex flex-wrap">
+                        <a th:href="@{/personas/nuevo}" class="action-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Nuevo Apoderado</span>
+                        </a>
+                        <a th:href="@{/estudiantes/nuevo}" class="action-btn">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Nuevo Estudiante</span>
+                        </a>
+                        <a th:href="@{/profesores/nuevo}" class="action-btn">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Nuevo Profesor</span>
+                        </a>
+                        <a href="#" class="action-btn" onclick="dashboardUtils.showNotification('Función próximamente disponible', 'info')">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Generar Reporte</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

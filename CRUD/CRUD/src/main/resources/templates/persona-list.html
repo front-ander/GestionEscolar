@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lista de Personas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .btn-custom {
+            border-radius: 25px;
+            padding: 8px 20px;
+        }
+        .badge-role {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>Sistema Escolar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user me-1"></i>
+                    <span th:text="${rol == 'ADMIN' ? 'Administrador' : 'Secretario'}"></span>
+                    <span class="badge badge-role ms-2" 
+                          th:classappend="${rol == 'ADMIN' ? 'bg-warning' : 'bg-info'}" 
+                          th:text="${rol}"></span>
+                </span>
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-users"></i> Personas
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="table-container">
+            <!-- Header -->
+            <div class="card-header-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">
+                            <i class="fas fa-users me-2"></i>Lista de Apoderados
+                        </h3>
+                        <p class="mb-0 opacity-75">Gestión de información personal</p>
+                    </div>
+                    <div class="col-auto">
+                        <!-- Solo mostrar botón de agregar si es ADMIN -->
+                        <a th:if="${rol == 'ADMIN'}" 
+                           th:href="@{/personas/nuevo}" 
+                           class="btn btn-light btn-custom">
+                            <i class="fas fa-plus me-2"></i>Nuevo Apoderado
+                        </a>
+                        <!-- Mostrar badge de solo lectura si es SECRETARIO -->
+                        <span th:if="${rol == 'SECRETARIO'}" 
+                              class="badge bg-light text-dark fs-6 px-3 py-2">
+                            <i class="fas fa-eye me-1"></i>Solo Lectura
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${param.error}" class="alert alert-warning mx-4 mt-3" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:if="${param.error[0] == 'sin-permisos'}">No tienes permisos para realizar esta acción.</span>
+                <span th:if="${param.error[0] == 'id-invalido'}">ID inválido.</span>
+                <span th:if="${param.error[0] == 'persona-no-encontrada'}">Persona no encontrada.</span>
+                <span th:if="${param.error[0] == 'error-eliminar'}">Error al eliminar la persona.</span>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col"><i class="fas fa-hashtag me-1"></i>ID</th>
+                            <th scope="col"><i class="fas fa-user me-1"></i>Nombre</th>
+                            <th scope="col"><i class="fas fa-user me-1"></i>Apellidos</th>
+                            <th scope="col"><i class="fas fa-envelope me-1"></i>Email</th>
+                            <th scope="col"><i class="fas fa-phone me-1"></i>Teléfono</th>
+                            <th scope="col"><i class="fas fa-map-marker-alt me-1"></i>Dirección</th>
+                            <th scope="col" th:if="${rol == 'ADMIN'}"><i class="fas fa-cogs me-1"></i>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="persona : ${personas}">
+                            <td>
+                                <span class="badge bg-primary rounded-pill" th:text="${persona.id}"></span>
+                            </td>
+                            <td>
+                                <strong th:text="${persona.nombre}"></strong>
+                            </td>
+                            <td th:text="${persona.apellido}"></td>
+                            <td>
+                                <a th:href="'mailto:' + ${persona.email}" class="text-decoration-none">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    <span th:text="${persona.email}"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="'tel:' + ${persona.telefono}" class="text-decoration-none">
+                                    <i class="fas fa-phone me-1"></i>
+                                    <span th:text="${persona.telefono}"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                                <span th:text="${persona.direccion}"></span>
+                            </td>
+                            <td th:if="${rol == 'ADMIN'}">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-outline-primary btn-sm" 
+                                       th:href="@{/personas/editar/{id}(id=${persona.id})}"
+                                       data-bs-toggle="tooltip" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" 
+                                       th:href="@{/personas/eliminar/{id}(id=${persona.id})}"
+                                       onclick="return confirm('¿Está seguro de eliminar esta persona?')"
+                                       data-bs-toggle="tooltip" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(personas)}">
+                            <td th:colspan="${rol == 'ADMIN' ? '7' : '6'}" class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <br>No hay personas registradas
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <small class="text-muted">
+                            <i class="fas fa-users me-1"></i>
+                            Total de personas: <strong th:text="${#lists.size(personas)}">0</strong>
+                        </small>
+                    </div>
+                    <div class="col-auto">
+                        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
+                           class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>
