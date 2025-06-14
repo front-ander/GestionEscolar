@@ -1,10 +1,12 @@
 package com.registro2.CRUD.services;
 
-import com.registro2.CRUD.model.Estudiante;
-import com.registro2.CRUD.repository.EstudianteRepository;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.registro2.CRUD.model.Estudiante;
+import com.registro2.CRUD.repository.EstudianteRepository;
 
 @Service
 public class EstudianteService {
@@ -26,6 +28,10 @@ public class EstudianteService {
 
     public void eliminar(Long id) {
         estudianteRepository.deleteById(id);
+    }
+
+    public List<Estudiante> getAllEstudiantes() {
+        return estudianteRepository.findAll();
     }
     
     // Nuevo método para contar

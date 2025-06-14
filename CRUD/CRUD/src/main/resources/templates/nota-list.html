@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Notas</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
+    <!-- Optional: Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+        .btn-rounded {
+            border-radius: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6">Lista de Notas</h1>
+        <a href="/notas/new" class="btn btn-primary btn-rounded">
+            <i class="fas fa-plus me-2"></i>Agregar Nota
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Estudiante</th>
+                        <th>Curso</th>
+                        <th>Valor</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="nota : ${notas}">
+                        <td th:text="${nota.id}"></td>
+                        <td th:text="${nota.estudiante.nombre}"></td>
+                        <td th:text="${nota.curso.nombre}"></td>
+                        <td th:text="${nota.valor}"></td>
+                        <td class="text-center">
+                            <a th:href="@{/notas/edit/{id}(id=${nota.id})}" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/notas/delete/{id}(id=${nota.id})}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 text-end">
+        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
+           class="btn btn-secondary btn-rounded btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Bootstrap JS (Optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
+
+</body>
+</html>
