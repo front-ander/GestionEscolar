@@ -2,77 +2,140 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Formulario de Nota</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .form-container {
-            max-width: 600px;
-            margin: 50px auto;
-        }
-        .form-label {
-            font-weight: 500;
-        }
-        .btn-rounded {
-            border-radius: 50px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/nota.css}">
 </head>
 <body>
-
-<div class="container form-container">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
-            <h4 class="mb-0">Formulario de Nota</h4>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>Sistema Escolar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user me-1"></i>
+                    <span th:text="${rol == 'ADMIN' ? 'Administrador' : 'Secretario'}"></span>
+                    <span class="badge badge-role ms-2" 
+                          th:classappend="${rol == 'ADMIN' ? 'bg-warning' : 'bg-info'}" 
+                          th:text="${rol}"></span>
+                </span>
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
         </div>
-        <div class="card-body">
-            <form th:action="@{/notas}" th:object="${nota}" method="post">
-                <!-- Campo oculto para ID -->
-                <input type="hidden" th:field="*{id}" />
+    </nav>
 
-                <!-- Estudiante -->
-                <div class="mb-3">
-                    <label class="form-label">Estudiante:</label>
-                    <select class="form-select" th:field="*{estudiante}">
-                        <option th:each="est : ${estudiantes}" th:value="${est.id}" th:text="${est.nombre}"></option>
-                    </select>
-                </div>
-
-                <!-- Curso -->
-                <div class="mb-3">
-                    <label class="form-label">Curso:</label>
-                    <select class="form-select" th:field="*{curso}">
-                        <option th:each="cur : ${cursos}" th:value="${cur.id}" th:text="${cur.nombre}"></option>
-                    </select>
-                </div>
-
-                <!-- Valor -->
-                <div class="mb-3">
-                    <label class="form-label">Valor:</label>
-                    <input type="text" class="form-control" th:field="*{valor}" placeholder="Ingrese el valor de la nota" />
-                </div>
-
-                <!-- Botones -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="submit" class="btn btn-success btn-rounded">
-                        <i class="fas fa-save me-2"></i>Guardar
-                    </button>
-                    <a href="/notas" class="btn btn-secondary btn-rounded">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}">
+                        <i class="fas fa-home"></i> Inicio
                     </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/notas}">
+                        <i class="fas fa-star"></i> Notas
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-edit"></i> Formulario
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="form-container">
+            <div class="card-header-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">
+                            <i class="fas fa-star me-2"></i>
+                            <span th:text="${nota.id == null ? 'Nueva Nota' : 'Editar Nota'}"></span>
+                        </h3>
+                        <p class="mb-0 opacity-75">Registro de calificaciones académicas</p>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="card-body p-4">
+                <form th:action="@{/notas}" th:object="${nota}" method="post" onsubmit="return validateNotaForm()">
+                    <!-- Campo oculto para ID -->
+                    <input type="hidden" th:field="*{id}" />
+
+                    <!-- Estudiante -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-user me-2"></i>Estudiante:
+                        </label>
+                        <select class="form-select" th:field="*{estudiante}" required>
+                            <option value="">Seleccione un estudiante</option>
+                            <option th:each="est : ${estudiantes}" 
+                                    th:value="${est.id}" 
+                                    th:text="${est.nombre + ' ' + est.apellido}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Curso -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-book me-2"></i>Curso:
+                        </label>
+                        <select class="form-select" th:field="*{curso}" required>
+                            <option value="">Seleccione un curso</option>
+                            <option th:each="cur : ${cursos}" 
+                                    th:value="${cur.id}" 
+                                    th:text="${cur.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Valor -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-star me-2"></i>Valor de la Nota:
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               th:field="*{valor}" 
+                               placeholder="Ingrese el valor (0-20)" 
+                               min="0" 
+                               max="20" 
+                               step="0.1"
+                               required />
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            La nota debe estar entre 0 y 20
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a th:href="@{/notas}" class="btn btn-secondary btn-custom">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="fas fa-save me-2"></i>
+                            <span th:text="${nota.id == null ? 'Guardar' : 'Actualizar'}"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/nota.js}"></script>
 </body>
 </html>

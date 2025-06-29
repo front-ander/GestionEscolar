@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 
 @Entity
 public class Profesor {
@@ -18,6 +21,9 @@ public class Profesor {
     private String especialidad;
     private String codigoProfesor;
     private String telefono;
+    
+    @OneToMany(mappedBy = "profesor", cascade = CascadeType.ALL)
+    private List<Asistencia> asistencias;
 
     // Constructores
     public Profesor() {
@@ -87,6 +93,14 @@ public class Profesor {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+    
+    public List<Asistencia> getAsistencias() {
+        return asistencias;
+    }
+
+    public void setAsistencias(List<Asistencia> asistencias) {
+        this.asistencias = asistencias;
     }
 
     @Override

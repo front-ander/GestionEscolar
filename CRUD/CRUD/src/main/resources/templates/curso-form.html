@@ -2,66 +2,113 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Formulario de Curso</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .form-container {
-            max-width: 600px;
-            margin: 50px auto;
-        }
-        .btn-rounded {
-            border-radius: 50px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/curso.css}">
 </head>
 <body>
-
-<div class="container form-container">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
-            <h4 class="mb-0">Formulario de Curso</h4>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>Sistema Escolar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user me-1"></i>
+                    <span th:text="${rol == 'ADMIN' ? 'Administrador' : 'Secretario'}"></span>
+                    <span class="badge badge-role ms-2" 
+                          th:classappend="${rol == 'ADMIN' ? 'bg-warning' : 'bg-info'}" 
+                          th:text="${rol}"></span>
+                </span>
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
         </div>
-        <div class="card-body">
-            <form th:action="@{/cursos}" th:object="${curso}" method="post">
-                <!-- Campo oculto para ID -->
-                <input type="hidden" th:field="*{id}" />
+    </nav>
 
-                <!-- Nombre del curso -->
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre del Curso:</label>
-                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                           placeholder="Ingrese el nombre del curso" required />
-                </div>
-
-                <!-- Botones -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="submit" class="btn btn-success btn-rounded">
-                        <i class="fas fa-save me-2"></i>Guardar
-                    </button>
-                    <a href="/cursos" class="btn btn-secondary btn-rounded">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}">
+                        <i class="fas fa-home"></i> Inicio
                     </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/cursos}">
+                        <i class="fas fa-book"></i> Cursos
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-edit"></i> Formulario
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="form-container">
+            <div class="card-header-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">
+                            <i class="fas fa-book me-2"></i>
+                            <span th:text="${curso.id == null ? 'Nuevo Curso' : 'Editar Curso'}"></span>
+                        </h3>
+                        <p class="mb-0 opacity-75">Registro de cursos académicos</p>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="card-body p-4">
+                <form th:action="@{/cursos}" th:object="${curso}" method="post" onsubmit="return validateCursoForm()">
+                    <!-- Campo oculto para ID -->
+                    <input type="hidden" th:field="*{id}" />
+
+                    <!-- Nombre del curso -->
+                    <div class="mb-4">
+                        <label for="nombre" class="form-label">
+                            <i class="fas fa-book me-2"></i>Nombre del Curso:
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="nombre" 
+                               th:field="*{nombre}"
+                               placeholder="Ingrese el nombre del curso" 
+                               required 
+                               minlength="3" />
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            El nombre debe tener al menos 3 caracteres
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a th:href="@{/cursos}" class="btn btn-secondary btn-custom">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="fas fa-save me-2"></i>
+                            <span th:text="${curso.id == null ? 'Guardar' : 'Actualizar'}"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
-
-<!-- Script personalizado -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log("Formulario de curso cargado correctamente");
-    });
-</script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/curso.js}"></script>
 </body>
 </html>

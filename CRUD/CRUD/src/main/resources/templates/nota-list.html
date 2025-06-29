@@ -2,79 +2,214 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Notas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestión de Notas</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <!-- Optional: Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-        .btn-rounded {
-            border-radius: 50px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/nota.css}">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>Sistema Escolar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user me-1"></i>
+                    <span th:text="${rol == 'ADMIN' ? 'Administrador' : 'Secretario'}"></span>
+                    <span class="badge badge-role ms-2" 
+                          th:classappend="${rol == 'ADMIN' ? 'bg-warning' : 'bg-info'}" 
+                          th:text="${rol}"></span>
+                </span>
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-6">Lista de Notas</h1>
-        <a href="/notas/new" class="btn btn-primary btn-rounded">
-            <i class="fas fa-plus me-2"></i>Agregar Nota
-        </a>
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-star"></i> Notas
+                </li>
+            </ol>
+        </nav>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-primary" th:text="${#lists.size(notas)}">0</div>
+                            <div class="stats-label">Total Notas</div>
+                        </div>
+                        <div class="stats-icon text-primary">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-success">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-success" th:text="${#lists.size(notas)}">0</div>
+                            <div class="stats-label">Promedio Alto</div>
+                        </div>
+                        <div class="stats-icon text-success">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-info">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-info" th:text="${#lists.size(notas)}">0</div>
+                            <div class="stats-label">Estudiantes</div>
+                        </div>
+                        <div class="stats-icon text-info">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <!-- Header -->
+            <div class="card-header-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">
+                            <i class="fas fa-star me-2"></i>Gestión de Notas
+                        </h3>
+                        <p class="mb-0 opacity-75">Administración de calificaciones académicas</p>
+                    </div>
+                    <div class="col-auto">
+                        <a th:href="@{/notas/new}" class="btn btn-light btn-custom">
+                            <i class="fas fa-plus me-2"></i>Nueva Nota
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${param.success}" class="alert alert-success mx-4 mt-3" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:if="${param.success[0] == 'nota-registrada'}">Nota registrada correctamente.</span>
+                <span th:if="${param.success[0] == 'nota-actualizada'}">Nota actualizada correctamente.</span>
+                <span th:if="${param.success[0] == 'nota-eliminada'}">Nota eliminada correctamente.</span>
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger mx-4 mt-3" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:if="${param.error[0] == 'error-registrar'}">Error al registrar la nota.</span>
+                <span th:if="${param.error[0] == 'error-actualizar'}">Error al actualizar la nota.</span>
+                <span th:if="${param.error[0] == 'error-eliminar'}">Error al eliminar la nota.</span>
+            </div>
+
+            <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Estudiante</th>
-                        <th>Curso</th>
-                        <th>Valor</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col"><i class="fas fa-hashtag me-1"></i>ID</th>
+                            <th scope="col"><i class="fas fa-user me-1"></i>Estudiante</th>
+                            <th scope="col"><i class="fas fa-book me-1"></i>Curso</th>
+                            <th scope="col"><i class="fas fa-star me-1"></i>Valor</th>
+                            <th scope="col"><i class="fas fa-cogs me-1"></i>Acciones</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="nota : ${notas}">
-                        <td th:text="${nota.id}"></td>
-                        <td th:text="${nota.estudiante.nombre}"></td>
-                        <td th:text="${nota.curso.nombre}"></td>
-                        <td th:text="${nota.valor}"></td>
-                        <td class="text-center">
-                            <a th:href="@{/notas/edit/{id}(id=${nota.id})}" class="btn btn-sm btn-warning me-1">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a th:href="@{/notas/delete/{id}(id=${nota.id})}" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </td>
-                    </tr>
+                        <tr th:each="nota : ${notas}">
+                            <td>
+                                <span class="badge bg-primary rounded-pill" th:text="${nota.id}"></span>
+                            </td>
+                            <td>
+                                <strong th:text="${nota.estudiante.nombre}"></strong>
+                            </td>
+                            <td>
+                                <span class="badge bg-info" th:text="${nota.curso.nombre}"></span>
+                            </td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${nota.valor >= 18 ? 'bg-success' : 
+                                                      nota.valor >= 14 ? 'bg-warning' : 'bg-danger'}"
+                                      th:text="${nota.valor}"></span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-outline-primary btn-sm" 
+                                       th:href="@{/notas/edit/{id}(id=${nota.id})}"
+                                       data-bs-toggle="tooltip" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" 
+                                       th:href="@{/notas/delete/{id}(id=${nota.id})}"
+                                       onclick="return confirm('¿Está seguro de eliminar esta nota?')"
+                                       data-bs-toggle="tooltip" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(notas)}">
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="fas fa-star fa-2x mb-2"></i>
+                                <br>No hay notas registradas
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+
+            <!-- Footer -->
+            <div class="card-footer bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <small class="text-muted">
+                            <i class="fas fa-star me-1"></i>
+                            Total de notas: <strong th:text="${#lists.size(notas)}">0</strong>
+                        </small>
+                    </div>
+                    <div class="col-auto">
+                        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
+                           class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="mt-4 text-end">
-        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
-           class="btn btn-secondary btn-rounded btn-sm">
-            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
-        </a>
-    </div>
-</div>
-
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/nota.js}"></script>
+    <script>
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
 </body>
 </html>

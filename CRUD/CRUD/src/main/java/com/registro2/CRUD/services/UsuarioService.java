@@ -1,9 +1,10 @@
 package com.registro2.CRUD.services;
 
-import com.registro2.CRUD.model.Usuario;
-import com.registro2.CRUD.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.registro2.CRUD.model.Usuario;
+import com.registro2.CRUD.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
@@ -51,6 +52,12 @@ public class UsuarioService {
                 Usuario secretario = new Usuario("secretario", "secretario123", "SECRETARIO");
                 usuarioRepository.save(secretario);
                 System.out.println("Usuario secretario creado");
+            }
+
+            if (usuarioRepository.findByUsername("profesor") == null) {
+                Usuario profesor = new Usuario("profesor", "profesor123", "PROFESOR");
+                usuarioRepository.save(profesor);
+                System.out.println("Usuario profesor creado");
             }
         } catch (Exception e) {
             System.err.println("Error al crear usuarios por defecto: " + e.getMessage());

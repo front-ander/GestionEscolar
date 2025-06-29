@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 
 @Entity
 public class Estudiante {
@@ -17,6 +20,12 @@ public class Estudiante {
     private String email;
     private String curso;
     private String codigoEstudiante;
+    
+    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL)
+    private List<Asistencia> asistencias;
+    
+    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL)
+    private List<Pago> pagos;
     
     // Getters y Setters
     public Long getId() {
@@ -65,5 +74,21 @@ public class Estudiante {
 
     public void setCodigoEstudiante(String codigoEstudiante) {
         this.codigoEstudiante = codigoEstudiante;
+    }
+    
+    public List<Asistencia> getAsistencias() {
+        return asistencias;
+    }
+
+    public void setAsistencias(List<Asistencia> asistencias) {
+        this.asistencias = asistencias;
+    }
+
+    public List<Pago> getPagos() {
+        return pagos;
+    }
+
+    public void setPagos(List<Pago> pagos) {
+        this.pagos = pagos;
     }
 }

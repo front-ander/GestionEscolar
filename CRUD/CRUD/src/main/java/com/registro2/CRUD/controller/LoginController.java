@@ -1,16 +1,19 @@
 package com.registro2.CRUD.controller;
 
-import com.registro2.CRUD.model.Usuario;
-import com.registro2.CRUD.services.UsuarioService;
-import com.registro2.CRUD.services.PersonaService;
-import com.registro2.CRUD.services.EstudianteService;
-import com.registro2.CRUD.services.ProfesorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.registro2.CRUD.model.Usuario;
+import com.registro2.CRUD.services.EstudianteService;
+import com.registro2.CRUD.services.PersonaService;
+import com.registro2.CRUD.services.ProfesorService;
+import com.registro2.CRUD.services.UsuarioService;
+import com.registro2.CRUD.services.AsistenciaService;
+import com.registro2.CRUD.services.PagoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +32,12 @@ public class LoginController {
     
     @Autowired
     private ProfesorService profesorService;
+    
+    @Autowired
+    private AsistenciaService asistenciaService;
+    
+    @Autowired
+    private PagoService pagoService;
 
     // Redirigir la página principal al login
     @GetMapping("/")
@@ -89,6 +98,7 @@ public class LoginController {
             } else {
                 return "redirect:/dashboard-secretario";
             }
+
         } else {
             model.addAttribute("error", "Usuario o contraseña incorrectos");
             return "login";
@@ -115,6 +125,18 @@ public class LoginController {
         long totalPersonas = personaService.contarTodas();
         long totalEstudiantes = estudianteService.contarTodos();
         long totalProfesores = profesorService.contarTodos();
+        long totalAsistencias = asistenciaService.contarTodas();
+        long totalPagos = pagoService.contarTodos();
+        
+        // Estadísticas de asistencias
+        long asistenciasPresentes = asistenciaService.contarPorEstado("PRESENTE");
+        long asistenciasAusentes = asistenciaService.contarPorEstado("AUSENTE");
+        long asistenciasTardanzas = asistenciaService.contarPorEstado("TARDANZA");
+        
+        // Estadísticas de pagos
+        long pagosPagados = pagoService.contarPorEstado("PAGADO");
+        long pagosPendientes = pagoService.contarPorEstado("PENDIENTE");
+        long pagosVencidos = pagoService.contarPorEstado("VENCIDO");
         
         // Agregar datos al modelo
         model.addAttribute("usuario", usuario);
@@ -122,6 +144,18 @@ public class LoginController {
         model.addAttribute("totalEstudiantes", totalEstudiantes);
         model.addAttribute("totalProfesores", totalProfesores);
         model.addAttribute("totalCursos", 12); // Valor fijo por ahora
+        model.addAttribute("totalAsistencias", totalAsistencias);
+        model.addAttribute("totalPagos", totalPagos);
+        
+        // Estadísticas de asistencias
+        model.addAttribute("asistenciasPresentes", asistenciasPresentes);
+        model.addAttribute("asistenciasAusentes", asistenciasAusentes);
+        model.addAttribute("asistenciasTardanzas", asistenciasTardanzas);
+        
+        // Estadísticas de pagos
+        model.addAttribute("pagosPagados", pagosPagados);
+        model.addAttribute("pagosPendientes", pagosPendientes);
+        model.addAttribute("pagosVencidos", pagosVencidos);
         
         return "index";
     }
@@ -137,12 +171,36 @@ public class LoginController {
         long totalPersonas = personaService.contarTodas();
         long totalEstudiantes = estudianteService.contarTodos();
         long totalProfesores = profesorService.contarTodos();
+        long totalAsistencias = asistenciaService.contarTodas();
+        long totalPagos = pagoService.contarTodos();
+        
+        // Estadísticas de asistencias
+        long asistenciasPresentes = asistenciaService.contarPorEstado("PRESENTE");
+        long asistenciasAusentes = asistenciaService.contarPorEstado("AUSENTE");
+        long asistenciasTardanzas = asistenciaService.contarPorEstado("TARDANZA");
+        
+        // Estadísticas de pagos
+        long pagosPagados = pagoService.contarPorEstado("PAGADO");
+        long pagosPendientes = pagoService.contarPorEstado("PENDIENTE");
+        long pagosVencidos = pagoService.contarPorEstado("VENCIDO");
         
         model.addAttribute("usuario", usuario);
         model.addAttribute("totalPersonas", totalPersonas);
         model.addAttribute("totalEstudiantes", totalEstudiantes);
         model.addAttribute("totalProfesores", totalProfesores);
         model.addAttribute("totalCursos", 12);
+        model.addAttribute("totalAsistencias", totalAsistencias);
+        model.addAttribute("totalPagos", totalPagos);
+        
+        // Estadísticas de asistencias
+        model.addAttribute("asistenciasPresentes", asistenciasPresentes);
+        model.addAttribute("asistenciasAusentes", asistenciasAusentes);
+        model.addAttribute("asistenciasTardanzas", asistenciasTardanzas);
+        
+        // Estadísticas de pagos
+        model.addAttribute("pagosPagados", pagosPagados);
+        model.addAttribute("pagosPendientes", pagosPendientes);
+        model.addAttribute("pagosVencidos", pagosVencidos);
         
         return "dashboard-secretario";
     }

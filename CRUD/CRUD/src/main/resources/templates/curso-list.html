@@ -2,82 +2,199 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Cursos</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-        .btn-rounded {
-            border-radius: 50px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestión de Cursos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/curso.css}">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>Sistema Escolar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user me-1"></i>
+                    <span th:text="${rol == 'ADMIN' ? 'Administrador' : 'Secretario'}"></span>
+                    <span class="badge badge-role ms-2" 
+                          th:classappend="${rol == 'ADMIN' ? 'bg-warning' : 'bg-info'}" 
+                          th:text="${rol}"></span>
+                </span>
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-6">Lista de Cursos</h1>
-        <a href="/cursos/new" class="btn btn-success btn-rounded">
-            <i class="fas fa-plus me-2"></i>Agregar Curso
-        </a>
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-book"></i> Cursos
+                </li>
+            </ol>
+        </nav>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-primary" th:text="${#lists.size(cursos)}">0</div>
+                            <div class="stats-label">Total Cursos</div>
+                        </div>
+                        <div class="stats-icon text-primary">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-success">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-success" th:text="${#lists.size(cursos)}">0</div>
+                            <div class="stats-label">Cursos Activos</div>
+                        </div>
+                        <div class="stats-icon text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card border-info">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number text-info" th:text="${#lists.size(cursos)}">0</div>
+                            <div class="stats-label">Disponibles</div>
+                        </div>
+                        <div class="stats-icon text-info">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <!-- Header -->
+            <div class="card-header-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">
+                            <i class="fas fa-book me-2"></i>Gestión de Cursos
+                        </h3>
+                        <p class="mb-0 opacity-75">Administración de cursos académicos</p>
+                    </div>
+                    <div class="col-auto">
+                        <a th:href="@{/cursos/new}" class="btn btn-light btn-custom">
+                            <i class="fas fa-plus me-2"></i>Nuevo Curso
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${param.success}" class="alert alert-success mx-4 mt-3" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:if="${param.success[0] == 'curso-registrado'}">Curso registrado correctamente.</span>
+                <span th:if="${param.success[0] == 'curso-actualizado'}">Curso actualizado correctamente.</span>
+                <span th:if="${param.success[0] == 'curso-eliminado'}">Curso eliminado correctamente.</span>
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger mx-4 mt-3" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:if="${param.error[0] == 'error-registrar'}">Error al registrar el curso.</span>
+                <span th:if="${param.error[0] == 'error-actualizar'}">Error al actualizar el curso.</span>
+                <span th:if="${param.error[0] == 'error-eliminar'}">Error al eliminar el curso.</span>
+            </div>
+
+            <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th class="text-center">Acciones</th>
+                            <th scope="col"><i class="fas fa-hashtag me-1"></i>ID</th>
+                            <th scope="col"><i class="fas fa-book me-1"></i>Nombre del Curso</th>
+                            <th scope="col"><i class="fas fa-cogs me-1"></i>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="curso : ${cursos}">
-                            <td th:text="${curso.id}"></td>
-                            <td th:text="${curso.nombre}"></td>
-                            <td class="text-center">
-                                <a th:href="@{/cursos/edit/{id}(id=${curso.id})}" class="btn btn-sm btn-primary me-1">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a th:href="@{/cursos/delete/{id}(id=${curso.id})}" class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
+                            <td>
+                                <span class="badge bg-primary rounded-pill" th:text="${curso.id}"></span>
+                            </td>
+                            <td>
+                                <strong th:text="${curso.nombre}"></strong>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-outline-primary btn-sm" 
+                                       th:href="@{/cursos/edit/{id}(id=${curso.id})}"
+                                       data-bs-toggle="tooltip" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" 
+                                       th:href="@{/cursos/delete/{id}(id=${curso.id})}"
+                                       onclick="return confirm('¿Está seguro de eliminar este curso?')"
+                                       data-bs-toggle="tooltip" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(cursos)}">
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                <i class="fas fa-book fa-2x mb-2"></i>
+                                <br>No hay cursos registrados
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
+            <!-- Footer -->
+            <div class="card-footer bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <small class="text-muted">
+                            <i class="fas fa-book me-1"></i>
+                            Total de cursos: <strong th:text="${#lists.size(cursos)}">0</strong>
+                        </small>
+                    </div>
+                    <div class="col-auto">
+                        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
+                           class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Botón de Volver al Dashboard -->
-    <div class="mt-4 text-end">
-        <a th:href="@{${rol == 'ADMIN' ? '/dashboard' : '/dashboard-secretario'}}" 
-           class="btn btn-secondary btn-rounded btn-sm">
-            <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
-        </a>
-    </div>
-</div>
-
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
-
-<!-- Script personalizado -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log("Página de cursos cargada correctamente");
-    });
-</script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/curso.js}"></script>
+    <script>
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
 </body>
 </html>
