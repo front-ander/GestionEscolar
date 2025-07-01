@@ -78,6 +78,21 @@ ul ul a {
     background: #495057; /* Slightly lighter dark for submenus */
 }
 
+.sidebar ul.components > li {
+    margin-bottom: 0;
+}
+.sidebar ul.components > li > a, .sidebar ul.components > li > span {
+    margin-bottom: 0;
+}
+.sidebar ul ul {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+.sidebar ul ul li {
+    margin-bottom: 0;
+}
+
 /* Content Styles */
 .content {
     width: 100%;

@@ -1,15 +1,17 @@
 package com.registro2.CRUD;
 
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import com.registro2.CRUD.services.AsistenciaService;
-import com.registro2.CRUD.services.PagoService;
 import com.registro2.CRUD.services.EstudianteService;
+import com.registro2.CRUD.services.PagoService;
 import com.registro2.CRUD.services.ProfesorService;
-import java.util.logging.Logger;
 
 @SpringBootApplication
 public class CrudApplication {

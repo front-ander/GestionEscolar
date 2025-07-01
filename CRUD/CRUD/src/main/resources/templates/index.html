@@ -22,8 +22,7 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h3><i class="fas fa-graduation-cap me-2"></i>I.E.P Señor de los milagros</h3>
-                <p th:if="${usuario}" th:text="'Admin: ' + ${usuario.username}">Administrador</p>
+                <h3 style="font-size:1.1rem; margin:0.5rem 0;"><i class="fas fa-graduation-cap me-2"></i>I.E.P Señor de los milagros</h3>
             </div>
             <ul class="list-unstyled sidebar-nav">
                 <li class="nav-item">
@@ -75,7 +74,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a th:href="@{/reporte/estudiantes}" class="nav-link">
                         <i class="fas fa-solid fa-flag"></i>
                         <span>Reportes</span>
                     </a>
